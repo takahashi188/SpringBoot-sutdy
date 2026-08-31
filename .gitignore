@@ -1,0 +1,21 @@
+# Spring Boot
+backend/demo/target/
+
+# Vue
+**/node_modules/
+**/dist/
+
+# Eclipse Worksapce
+.metadata/
+Serves/
+
+# Eclipse
+.project
+.classpath
+.settings/
+
+# VSCode
+.vscode/
+
+# Logs
+*.log
