@@ -1,7 +1,5 @@
 package com.example.demo.controller;
 
-import java.util.List;
-
 import jakarta.validation.Valid;
 
 import org.springframework.data.domain.Page;
@@ -51,8 +49,8 @@ public class UserController {
     }
     
     @GetMapping("/users/search")
-    public ResponseEntity<List<UserResponse>> findUserByName(@RequestParam String name) {
-        List<UserResponse> findedUsers = userService.findByName(name);
+    public ResponseEntity<Page<UserResponse>> findUserByName(@PageableDefault(page = 0, size = 10) Pageable pageable, @RequestParam String name) {
+        Page<UserResponse> findedUsers = userService.findByName(name, pageable);
         return ResponseEntity.ok(findedUsers);
     }
     
