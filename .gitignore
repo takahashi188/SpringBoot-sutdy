@@ -7,7 +7,7 @@ backend/demo/target/
 
 # Eclipse Worksapce
 .metadata/
-Serves/
+backend/Servers/
 
 # Eclipse
 .project
