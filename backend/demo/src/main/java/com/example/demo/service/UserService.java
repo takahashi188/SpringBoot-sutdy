@@ -158,12 +158,15 @@ public class UserService {
 	}
 
 	// 問題６
-	public List<UserResponse> findByName(String name) {
-		List<User> users = userRepository.findByNameContaining(name);
+	public Page<UserResponse> findByName(String name, Pageable pageable) {
+		if (pageable.getPageSize() > 20) {
+			throw new InvalidPageException("size", "20以下を指定してください");
+		}
+		
+		Page<User> users = userRepository.findByNameContaining(name, pageable);
 
-		List<UserResponse> userResponses = users.stream().map(
-				user -> {return createUserResponse(user, "");})
-				.toList();
+		Page<UserResponse> userResponses = users.map(
+				user -> {return createUserResponse(user, "");});
 
 		return userResponses;
 	}
