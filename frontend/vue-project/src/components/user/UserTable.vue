@@ -5,6 +5,12 @@ defineProps({
     required: true,
   },
 });
+
+const emit = defineEmits(["goUserShow"]);
+
+const showUser = (id) => {
+  emit("goUserShow", id);
+}
 </script>
 
 <template>
@@ -29,7 +35,7 @@ defineProps({
             {{ user.id }}
           </td>
 
-          <td class="px-4 py-3">
+          <td @click="showUser(user.id)" class="px-4 py-3">
             {{ user.name }}
           </td>
 
