@@ -9,11 +9,12 @@ const totalPage = ref(0);
 const searchKeyword = ref("");
 const sort = ref("id,asc");
 const errorMessage = ref("");
-const isSearch = ref(false);
+const doSearch = ref(false);
+const count = ref(1);
 
 const getUsers = async () => {
   try {
-    const url = isSearch.value
+    const url = doSearch.value
       ? "http://localhost:8080/api/users/search"
       : "http://localhost:8080/api/users";
 
@@ -23,7 +24,7 @@ const getUsers = async () => {
         size: 10,
         sort: sort.value,
         // 検索条件があるならクエリに追加する
-        ...(searchKeyword.value && {
+        ...(doSearch.value && {
           name: searchKeyword.value,
         }),
       },
@@ -32,6 +33,7 @@ const getUsers = async () => {
     users.value = response.data.content;
     currentPage.value = response.data.number;
     totalPage.value = response.data.totalPages;
+    console.log(count.value++);
   } catch (error) {
     console.log(error);
 
@@ -44,8 +46,8 @@ const getUsers = async () => {
 };
 
 const searchUsers = () => {
-  currentPage.value = 0;
-  isSearch.value = !isSearch.value;
+  doSearch.value = true;
+  reloadUsers();
 };
 
 const backPage = () => {
@@ -58,12 +60,20 @@ const nextPage = () => {
 
 const resetSearchKeyword = () => {
   searchKeyword.value = "";
-  currentPage.value = 0;
-  isSearch.value = !isSearch.value;
+  doSearch.value = false;
+  reloadUsers();
 };
 
+const reloadUsers = () => {
+  if (currentPage.value === 0) {
+    getUsers();
+  } else {
+    currentPage.value = 0;
+  }
+}
+
 watch(
-  [currentPage, sort, isSearch],
+  [currentPage, sort],
   () => {
     getUsers();
   },
