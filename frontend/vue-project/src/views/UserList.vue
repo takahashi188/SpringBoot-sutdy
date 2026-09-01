@@ -2,15 +2,18 @@
 import UserTable from "@/components/user/UserTable.vue";
 import axios from "axios";
 import { ref, watch } from "vue";
+import { useRouter } from "vue-router";
+import { storeToRefs } from "pinia";
+import { useUserListStore } from "@/store/userListStore";
+
+const router = useRouter();
+const userListStore = useUserListStore();
+
+const { currentPage, totalPage, sort, searchKeyword, doSearch } =
+  storeToRefs(userListStore);
 
 const users = ref([]);
-const currentPage = ref(0);
-const totalPage = ref(0);
-const searchKeyword = ref("");
-const sort = ref("id,asc");
 const errorMessage = ref("");
-const doSearch = ref(false);
-const count = ref(1);
 
 const getUsers = async () => {
   try {
@@ -33,7 +36,6 @@ const getUsers = async () => {
     users.value = response.data.content;
     currentPage.value = response.data.number;
     totalPage.value = response.data.totalPages;
-    console.log(count.value++);
   } catch (error) {
     console.log(error);
 
@@ -70,7 +72,7 @@ const reloadUsers = () => {
   } else {
     currentPage.value = 0;
   }
-}
+};
 
 watch(
   [currentPage, sort],
@@ -79,6 +81,10 @@ watch(
   },
   { immediate: true },
 );
+
+const goUserShow = (id) => {
+  router.push({ name: "show", params: { id: id } });
+};
 </script>
 
 <template>
@@ -130,7 +136,7 @@ watch(
       </p>
 
       <!-- 一覧 -->
-      <UserTable :users="users" />
+      <UserTable :users="users" @go-user-show="goUserShow" />
 
       <!-- ページング -->
       <div class="flex items-center justify-center gap-4 mt-6">
