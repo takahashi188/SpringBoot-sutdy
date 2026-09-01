@@ -9,10 +9,11 @@ const totalPage = ref(0);
 const searchKeyword = ref("");
 const sort = ref("id,asc");
 const errorMessage = ref("");
+const isSearch = ref(false);
 
 const getUsers = async () => {
   try {
-    const url = searchKeyword.value
+    const url = isSearch.value
       ? "http://localhost:8080/api/users/search"
       : "http://localhost:8080/api/users";
 
@@ -44,7 +45,7 @@ const getUsers = async () => {
 
 const searchUsers = () => {
   currentPage.value = 0;
-  getUsers();
+  isSearch.value = !isSearch.value;
 };
 
 const backPage = () => {
@@ -58,11 +59,11 @@ const nextPage = () => {
 const resetSearchKeyword = () => {
   searchKeyword.value = "";
   currentPage.value = 0;
-  getUsers();
+  isSearch.value = !isSearch.value;
 };
 
 watch(
-  [currentPage, sort],
+  [currentPage, sort, isSearch],
   () => {
     getUsers();
   },
