@@ -1,6 +1,7 @@
 import UserCreate from '@/views/UserCreate.vue'
 import UserList from '@/views/UserList.vue';
 import UserShow from '@/views/UserShow.vue';
+import UserEdit from '@/views/UserEdit.vue';
 import { createRouter, createWebHistory } from 'vue-router'
 import { useUserListStore } from "@/store/userListStore";
 import { useNavigationStore } from '@/store/navigationStore';
@@ -20,13 +21,21 @@ const routes = [
     }
   },
   {
-    path: "/users/:id",
+    path: "/users/:id/show",
     name: "show",
     component: UserShow,
     meta: {
       keepUserListState: true,
     }
-  }
+  },
+  {
+    path: "/users/:id/edit",
+    name: "edit",
+    component: UserEdit,
+    meta: {
+      keepUserListState: true,
+    }
+  },
 ];
 
 const router = createRouter({

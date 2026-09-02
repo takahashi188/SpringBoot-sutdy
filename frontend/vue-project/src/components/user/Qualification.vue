@@ -4,7 +4,6 @@ import { ref, reactive } from "vue";
 const props = defineProps(["qualifications"]);
 const form = defineModel("form");
 const errors = defineModel("errors");
-
 const qualificationForm = reactive({
   qualificationId: null,
   acquisitionDate: null,
@@ -41,8 +40,8 @@ const addQualification = () => {
     acquisitionDate: qualificationForm.acquisitionDate,
   });
 
-  form.qualificationId = null;
-  form.acquisitionDate = null;
+  form.value.qualificationId = null;
+  form.value.acquisitionDate = null;
 };
 
 // IDで消す

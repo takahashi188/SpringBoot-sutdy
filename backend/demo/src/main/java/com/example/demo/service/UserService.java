@@ -3,6 +3,7 @@ package com.example.demo.service;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -100,24 +101,75 @@ public class UserService {
 	public UserResponse update(UserUpdateRequest userUpdateRequest, Integer id) {
 		User user = getById(id);
 
-		if (isUpdatable(userUpdateRequest.getEmail())) {
-			if (userRepository.existsByEmailAndIdNot(userUpdateRequest.getEmail(), id)) {
-				throw new EmailAlreadyExistsException();
+		if (userRepository.existsByEmailAndIdNot(userUpdateRequest.getEmail(), id)) {
+			throw new EmailAlreadyExistsException();
+		}
+		user.setEmail(userUpdateRequest.getEmail());
+		user.setName(userUpdateRequest.getName());
+
+
+		// リクエストDTOにパスワードがあればリクエストのパスワード、なければ元のパスワードをセット
+		user.setPassword(userUpdateRequest.getPassword() != null && !userUpdateRequest.getPassword().isBlank()
+				? passwordEncoder.encode(userUpdateRequest.getPassword())
+				: user.getPassword());
+
+		if (userUpdateRequest.getProfile() != null && hasProfileData(userUpdateRequest.getProfile())) {
+			// ProfileのリクエストDTOをEntityに保持
+			ProfileCreateRequest profileCreateRequest = userUpdateRequest.getProfile();
+			
+			// もとのProfileデータがあれば使用し、なければ新しくProfileデータを作成
+			Profile profile = user.getProfile() != null ? user.getProfile() : new Profile();
+
+			profile.setNickname(profileCreateRequest.getNickname());
+			profile.setBirthday(profileCreateRequest.getBirthday());
+
+			profile.setUser(user);
+			user.setProfile(profile);
+			
+		} else {
+			user.setProfile(null);
+		}
+
+		if (userUpdateRequest.getQualifications() != null && 
+				!userUpdateRequest.getQualifications().isEmpty()) {
+			List<QualificationRequest> qualificationRequests = userUpdateRequest.getQualifications();
+
+			Set<Integer> qualificationIds = new HashSet<>();
+
+			// 資格の重複チェック
+			for (QualificationRequest request : qualificationRequests) {
+				if (!qualificationIds.add(request.getQualificationId())) {
+					throw new InvalidQualificationException(
+							"同じ資格を複数登録できません");
+				}
 			}
-			user.setEmail(userUpdateRequest.getEmail());
+			
+			// 資格リクエストDTOをEntityに保持
+			List<Qualification> qualifications = qualificationRequests.stream().map(
+					qualificationRequest -> {
+						Qualification qualification =  new Qualification();
+
+						qualification.setQualificationMaster(
+								qualificationMasterRepository.findById(qualificationRequest.getQualificationId())
+								.orElseThrow(() -> new InvalidQualificationException("対象の資格で登録または変更できません")));
+						qualification.setAcquisitionDate(qualificationRequest.getAcquisitionDate());
+						qualification.setUser(user);
+
+						return qualification;
+					}).collect(Collectors.toList());
+			
+			// 対象のユーザーが持っている既存の資格情報を破棄
+			user.getQualifications().clear();
+			// 新しい資格情報を対象のユーザーの資格情報に結びつける
+			user.getQualifications().addAll(qualifications);
+
+		} else {
+			user.getQualifications().clear();
 		}
 
-		if (isUpdatable(userUpdateRequest.getName())) {
-			user.setName(userUpdateRequest.getName());
-		}
+		User savedUser = userRepository.save(user);
 
-		if (isUpdatable(userUpdateRequest.getPassword())) {
-			user.setPassword(passwordEncoder.encode(userUpdateRequest.getPassword()));;
-		}
-
-		userRepository.save(user);
-
-		return new UserResponse(user.getId(), user.getName(), user.getEmail(), "更新完了");
+		return createUserResponse(savedUser,"更新完了");
 	}
 
 	// 問題３
@@ -162,7 +214,7 @@ public class UserService {
 		if (pageable.getPageSize() > 20) {
 			throw new InvalidPageException("size", "20以下を指定してください");
 		}
-		
+
 		Page<User> users = userRepository.findByNameContaining(name, pageable);
 
 		Page<UserResponse> userResponses = users.map(

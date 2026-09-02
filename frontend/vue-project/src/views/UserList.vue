@@ -91,6 +91,10 @@ const goUserShow = (id) => {
   router.push({ name: "show", params: { id: id } });
 };
 
+const goUserEdit = (id) => {
+  router.push({ name: "edit", params: { id: id } });
+};
+
 // import { onActivated } from "vue";
 // import { useNavigationStore } from "@/store/navigationStore";
 
@@ -164,7 +168,7 @@ const goUserShow = (id) => {
       </p>
 
       <!-- 一覧 -->
-      <UserTable :users="users" @go-user-show="goUserShow" />
+      <UserTable :users="users" @go-user-show="goUserShow" @go-user-edit="goUserEdit"/>
 
       <!-- ページング -->
       <div class="flex items-center justify-center gap-4 mt-6">
