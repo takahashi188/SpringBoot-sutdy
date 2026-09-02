@@ -6,10 +6,14 @@ defineProps({
   },
 });
 
-const emit = defineEmits(["goUserShow"]);
+const emit = defineEmits(["goUserShow", "goUserEdit"]);
 
 const showUser = (id) => {
   emit("goUserShow", id);
+}
+
+const editUser = (id) => {
+  emit("goUserEdit", id);
 }
 </script>
 
@@ -22,6 +26,7 @@ const showUser = (id) => {
           <th class="px-4 py-3 text-left">ユーザー名</th>
           <th class="px-4 py-3 text-left">メールアドレス</th>
           <th class="px-4 py-3 text-left">ニックネーム</th>
+          <th class="px-4 py-3 text-left">操作</th>
         </tr>
       </thead>
 
@@ -49,6 +54,14 @@ const showUser = (id) => {
                 ? user.profile.nickname
                 : "未設定"
             }}
+          </td>
+          <td class="px-4 py-3">
+            <button
+              @click="editUser(user.id)"
+              class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
+            >
+              編集
+            </button>
           </td>
         </tr>
 
