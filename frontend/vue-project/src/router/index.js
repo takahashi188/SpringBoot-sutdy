@@ -3,6 +3,7 @@ import UserList from '@/views/UserList.vue';
 import UserShow from '@/views/UserShow.vue';
 import { createRouter, createWebHistory } from 'vue-router'
 import { useUserListStore } from "@/store/userListStore";
+import { useNavigationStore } from '@/store/navigationStore';
 
 const routes = [
   {
@@ -13,7 +14,10 @@ const routes = [
   {
     path: "/users",
     name: "list",
-    component: UserList
+    component: UserList,
+    meta: {
+      Keepalive: true,
+    }
   },
   {
     path: "/users/:id",
@@ -39,6 +43,12 @@ router.beforeEach((to, from) => {
   ) {
     userListStore.$reset();
   }
-});
 
+  // const navigationStore = useNavigationStore();
+
+  // navigationStore.previousRoute = from.name;
+  // navigationStore.currentRoute = to.name;
+
+  // console.log(window.history.state.back, window.history.state.current);
+});
 export default router

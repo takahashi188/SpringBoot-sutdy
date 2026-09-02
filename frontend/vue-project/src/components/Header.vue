@@ -1,4 +1,19 @@
 <script setup>
+// import { useRouter } from "vue-router";
+// import { useNavigationStore } from "@/store/navigationStore";
+
+// const router = useRouter();
+// const navigationStore = useNavigationStore();
+
+// const goUserList = () => {
+//   if (navigationStore.previousRoute === "list" && navigationStore.currentRoute === "show") {
+//   // if (window.history.state.back === "/users/" && window.history.state.current.startsWith("/users/")) {
+//     router.back();
+//   } else {
+//     router.push({ name: "list" });
+//   }
+//   // router.push({ name: "list" });
+// };
 </script>
 
 <template>
@@ -19,9 +34,9 @@
       >
         ユーザー一覧
       </router-link>
+      <!-- <button @click="goUserList">ユーザー一覧</button> -->
     </div>
   </nav>
 </template>
 
-<style scoped>
-</style>
+<style scoped></style>

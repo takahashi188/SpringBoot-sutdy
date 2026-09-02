@@ -14,6 +14,11 @@ const { currentPage, totalPage, sort, searchKeyword, doSearch } =
 
 const users = ref([]);
 const errorMessage = ref("");
+// const currentPage = ref(0);
+// const totalPage = ref(0);
+// const sort = ref("id,asc");
+// const searchKeyword = ref("");
+// const doSearch = ref(false);
 
 const getUsers = async () => {
   try {
@@ -85,6 +90,29 @@ watch(
 const goUserShow = (id) => {
   router.push({ name: "show", params: { id: id } });
 };
+
+// import { onActivated } from "vue";
+// import { useNavigationStore } from "@/store/navigationStore";
+
+// const navigationStore = useNavigationStore();
+
+// // ユーザー一覧画面が再表示されたときに、前のルートが「show」の場合は再読み込みしないようにする
+// onActivated(() => {
+//   console.log(navigationStore.previousRoute, navigationStore.currentRoute);
+
+//   // 前のルートが「show」の場合は、ユーザー一覧を再読み込みしない
+//   if (navigationStore.previousRoute === "show") {
+//   // if (window.history.state.back.startsWith("/users/")) {
+//     return;
+//   } else {
+//     currentPage.value = 0;
+//     searchKeyword.value = "";
+//     sort.value = "id,asc";
+//     doSearch.value = false;
+
+//     getUsers();
+//   }
+// });
 </script>
 
 <template>
