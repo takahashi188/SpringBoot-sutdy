@@ -28,7 +28,7 @@ const errors = ref({});
 const getUser = async () => {
   try {
     errors.value = {}; // エラーをリセット
-    
+
     const response = await axios.get(`http://localhost:8080/api/users/${id}`);
     user.value = response.data;
   } catch (error) {
@@ -129,7 +129,14 @@ const backUserList = () => {
     <div class="bg-white rounded-lg shadow-md p-6">
       <h2 class="text-2xl font-bold text-center mb-6">ユーザー編集</h2>
 
-      <button @click="backUserList">一覧に戻る</button>
+      <div class="flex justify-end mb-6">
+        <button
+          @click="backUserList"
+          class="px-4 py-2 bg-gray-500 text-white rounded-md hover:bg-gray-600 transition"
+        >
+          一覧に戻る
+        </button>
+      </div>
 
       <div class="flex gap-2 mb-6">
         <button

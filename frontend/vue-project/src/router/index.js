@@ -5,6 +5,8 @@ import UserEdit from '@/views/UserEdit.vue';
 import { createRouter, createWebHistory } from 'vue-router'
 import { useUserListStore } from "@/store/userListStore";
 import { useNavigationStore } from '@/store/navigationStore';
+import Login from '@/views/Login.vue';
+import { useAuthStore } from '@/store/authStore';
 
 const routes = [
   {
@@ -18,6 +20,7 @@ const routes = [
     component: UserList,
     meta: {
       Keepalive: true,
+      requireAuth: true,
     }
   },
   {
@@ -26,6 +29,7 @@ const routes = [
     component: UserShow,
     meta: {
       keepUserListState: true,
+      requireAuth: true,
     }
   },
   {
@@ -36,6 +40,11 @@ const routes = [
       keepUserListState: true,
     }
   },
+  {
+    path: "/login",
+    name: "login",
+    component: Login
+  }
 ];
 
 const router = createRouter({
@@ -51,6 +60,11 @@ router.beforeEach((to, from) => {
     !to.meta.keepUserListState
   ) {
     userListStore.$reset();
+  }
+
+  // 認証が必要なルートにアクセスする場合、ログイン状態を確認
+  if (to.meta.requireAuth && !useAuthStore().isLoggedIn) {
+    return { name: "login" };
   }
 
   // const navigationStore = useNavigationStore();
