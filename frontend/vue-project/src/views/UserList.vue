@@ -43,6 +43,12 @@ const getUsers = async () => {
     totalPage.value = response.data.totalPages;
   } catch (error) {
     console.log(error);
+    users.value = [];
+
+    // ログインしていない場合はログイン画面にリダイレクト
+    if (error.response?.status === 401) {
+      router.push({ name: "login" });
+    }
 
     if (error.response?.data?.message) {
       errorMessage.value = error.response.data.message;
