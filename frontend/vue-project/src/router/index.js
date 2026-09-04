@@ -30,6 +30,7 @@ const routes = [
     meta: {
       keepUserListState: true,
       requireAuth: true,
+      authUserOnly: true, // 認証ユーザーのみアクセス可能
     }
   },
   {
@@ -38,6 +39,8 @@ const routes = [
     component: UserEdit,
     meta: {
       keepUserListState: true,
+      requireAuth: true,
+      authUserOnly: true, // 認証ユーザーのみアクセス可能
     }
   },
   {
@@ -67,6 +70,10 @@ router.beforeEach((to, from) => {
     return { name: "login" };
   }
 
+  // 認証ユーザーのみアクセス可能なルートにアクセスする場合、現在のユーザーと一致するか確認
+  if (to.meta.authUserOnly && Number(to.params.id) !== Number(useAuthStore().userId)) {
+    return { name: "list", query: { error: "他のユーザーの詳細ページや編集ページにはアクセスできません。" } };
+  }
   // const navigationStore = useNavigationStore();
 
   // navigationStore.previousRoute = from.name;

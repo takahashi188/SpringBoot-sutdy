@@ -15,7 +15,7 @@
 //   // router.push({ name: "list" });
 // };
 
-import axios from "axios";
+import api from "@/plugins/axios";
 import { useRouter } from "vue-router";
 import { useAuthStore } from "@/store/authStore";
 
@@ -26,7 +26,7 @@ const logout = async () => {
   try {
     console.log("logout start");
 
-    await axios.post("http://localhost:8080/logout");
+    await api.post("/logout");
 
     console.log("logout success");
 

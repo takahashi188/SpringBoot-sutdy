@@ -1,6 +1,6 @@
 <script setup>
 import { useRoute, useRouter } from "vue-router";
-import axios from "axios";
+import api from "@/plugins/axios";
 import { ref, reactive, onMounted } from "vue";
 import BaseInfo from "@/components/user/BaseInfo.vue";
 import Profile from "@/components/user/Profile.vue";
@@ -15,7 +15,7 @@ const qualifications = ref([]);
 const form = reactive({
   name: "",
   email: "",
-  password: "",
+  password: null,
   profile: {
     nickname: "",
     birthday: null,
@@ -25,46 +25,75 @@ const form = reactive({
 const step = ref(1);
 const errors = ref({});
 
-const getUser = async () => {
-  try {
-    errors.value = {}; // エラーをリセット
+// 引数と戻り値を追加
+const getUser = async (id) => {
+  const result = {
+    data: null,
+    error: "",
+  };
 
-    const response = await axios.get(`http://localhost:8080/api/users/${id}`);
-    user.value = response.data;
+  try {
+    const response = await api.get(`/api/users/${id}`);
+    result.data = response.data;
   } catch (error) {
     console.log(error);
 
     if (error.response?.data?.message) {
-      errors.value.edit = error.response.data.message;
+      result.error = error.response.data.message;
     } else {
-      errors.value.edit = "ユーザー情報の取得に失敗しました。";
+      result.error = "ユーザー情報の取得に失敗しました。";
     }
+  } finally {
+    return result;
   }
 };
 
+// 引数と戻り値を追加
 const getQualifications = async () => {
+  const result = {
+    data: [],
+    error: "",
+  };
+
   try {
-    errors.value = {}; // エラーをリセット
+    const response = await api.get("/api/qualification-master");
 
-    const response = await axios.get(
-      "http://localhost:8080/api/qualification-master",
-    );
-
-    qualifications.value = response.data;
+    result.data = response.data;
+    return result;
   } catch (error) {
     console.log(error);
 
     if (error.response?.data?.message) {
-      errors.value.edit = error.response.data.message;
+      result.error = error.response.data.message;
     } else {
-      errors.value.edit = "資格マスタの取得に失敗しました。";
+      result.error = "資格マスタの取得に失敗しました。";
     }
+  } finally {
+    return result;
   }
 };
 
 onMounted(async () => {
-  await getUser();
-  await getQualifications();
+  errors.value = {}; // エラーをリセット
+
+  const userResult = await getUser(id);
+  const qualificationsResult = await getQualifications();
+
+  if (userResult.data) {
+    user.value = userResult.data;
+  } else {
+    errors.value.edit = userResult.error;
+  }
+
+  if (qualificationsResult.data) {
+    qualifications.value = qualificationsResult.data;
+  } else {
+    errors.value.edit = qualificationsResult.error;
+  }
+
+  if (!user.value) {
+    return;
+  }
   form.name = user.value.name;
   form.email = user.value.email;
   form.profile.nickname = user.value.profile?.nickname || "";
@@ -78,12 +107,8 @@ const editUser = async () => {
       return;
     }
 
-    if (!form.password) {
-      form.password = null; // パスワードが空の場合はnullに設定して送信
-    }
-
-    const response = await axios.put(
-      `http://localhost:8080/api/users/${id}`,
+    const response = await api.put(
+      `/api/users/${id}`,
       form,
     );
 

@@ -6,6 +6,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -35,6 +36,9 @@ public class UserController {
         return ResponseEntity.ok(newUser);
     }
     
+    // メソッドを実行する前に条件を満たしているかをチェック
+    // 要件を満たさなければ403を返す
+    @PreAuthorize("#id == @userService.findIdByEmail(authentication.name)")
     @PutMapping("/users/{id}")
     public ResponseEntity<UserResponse> updateUser(
             @Valid @RequestBody UserUpdateRequest userUpdateRequest, @PathVariable Integer id) {
@@ -54,6 +58,7 @@ public class UserController {
         return ResponseEntity.ok(findedUsers);
     }
     
+    @PreAuthorize("#id == @userService.findIdByEmail(authentication.name)")
     @GetMapping("/users/{id}")
     public ResponseEntity<UserResponse> findUserById(@PathVariable Integer id) {
         UserResponse findedUser = userService.findById(id);

@@ -1,6 +1,6 @@
 <script setup>
 import { useRoute, useRouter } from "vue-router";
-import axios from "axios";
+import api from "@/plugins/axios";
 import { ref, onMounted } from "vue";
 
 const route = useRoute();
@@ -12,7 +12,7 @@ const errorMessage = ref("");
 
 const getUser = async () => {
   try {
-    const response = await axios.get(`http://localhost:8080/api/users/${id}`);
+    const response = await api.get(`/api/users/${id}`);
     user.value = response.data;
   } catch (error) {
     console.log(error);

@@ -17,19 +17,20 @@ import lombok.RequiredArgsConstructor;
 @RequestMapping("/api/auth")
 @RequiredArgsConstructor
 public class AuthController {
-	
+
 	private final UserRepository userRepository;
 
 	@GetMapping("/me")
 	public ResponseEntity<LoginUserResponse> me(Authentication authentication) {
 
-	    User user =
-	        userRepository.findByEmail(authentication.getName())
-	            .orElseThrow();
+		User user =
+				userRepository.findByEmail(authentication.getName())
+				.orElseThrow();
 
-	    return ResponseEntity.ok(new  LoginUserResponse(
-	        user.getName(),
-	        user.getEmail()
-	    ));
+		return ResponseEntity.ok(new  LoginUserResponse(
+				user.getId(),
+				user.getName(),
+				user.getEmail()
+				));
 	}
 }
