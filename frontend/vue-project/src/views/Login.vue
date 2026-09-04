@@ -1,12 +1,14 @@
 <script setup>
 import { reactive, ref } from "vue";
-import axios from "axios";
+import api from "@/plugins/axios";
 import { useAuthStore } from "@/store/authStore";
-import { useRouter } from "vue-router";
+import { useRouter, useRoute } from "vue-router";
 
 const authStore = useAuthStore();
 const router = useRouter();
 const errorMessage = ref("");
+const route = useRoute();
+const message = route.query.message || "";
 
 const form = reactive({
   email: "",
@@ -22,13 +24,13 @@ const login = async () => {
     params.append("password", form.password);
 
     // ログインリクエストを送信
-    const response = await axios.post("http://localhost:8080/login", params);
+    const response = await api.post("/login", params);
 
     // ログイン成功後、ユーザー情報を取得
-    const meResponse = await axios.get("http://localhost:8080/api/auth/me");
+    const meResponse = await api.get("/api/auth/me");
 
     // ユーザー名をストアに保存してログイン状態を更新
-    authStore.login(meResponse.data.name);
+    authStore.login(meResponse.data.name, meResponse.data.id);
     
     console.log("ログイン成功:", meResponse);
     router.push({ name: "list" }); // ユーザー一覧ページにリダイレクト
@@ -48,6 +50,10 @@ const login = async () => {
       <h2 class="text-3xl font-bold text-center text-gray-800 mb-8">
         ログイン
       </h2>
+
+      <p v-if="message" class="mb-4 rounded-md bg-blue-100 border border-blue-300 px-3 py-2 text-blue-700 text-sm">
+        {{ message }}
+      </p>
 
       <p
         v-if="errorMessage"

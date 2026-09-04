@@ -4,8 +4,10 @@ import jakarta.servlet.http.HttpServletResponse;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
+import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -14,6 +16,7 @@ import org.springframework.security.web.SecurityFilterChain;
 
 @Configuration
 @EnableWebSecurity
+@EnableMethodSecurity  // メソッド単位で認可チェックを行う
 public class SecurityConfig {
 
 	@Bean
@@ -31,7 +34,9 @@ public class SecurityConfig {
 		// それ以外のURLは認証必須
 		http.authorizeHttpRequests((requests) -> requests
 				// 未ログインでのアクセスを許可
-				.requestMatchers("/login", "/api/users/")
+				.requestMatchers("/login", "/api/qualification-master")
+				.permitAll()
+				.requestMatchers(HttpMethod.POST, "/api/users")
 				.permitAll()
 				// それ以外のパスはログイン済みならアクセス可能
 				.anyRequest().authenticated())

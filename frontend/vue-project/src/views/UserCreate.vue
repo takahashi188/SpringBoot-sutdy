@@ -3,7 +3,7 @@ import BaseInfo from "@/components/user/BaseInfo.vue";
 import Profile from "@/components/user/Profile.vue";
 import Qualification from "@/components/user/Qualification.vue";
 import { ref, reactive, onMounted } from "vue";
-import axios from "axios";
+import api from "@/plugins/axios";
 
 const step = ref(1);
 const form = reactive({
@@ -21,9 +21,7 @@ const errors = ref({});
 
 const getQualifications = async () => {
   try {
-    const response = await axios.get(
-      "http://localhost:8080/api/qualification-master",
-    );
+    const response = await api.get("/api/qualification-master");
 
     qualifications.value = response.data;
   } catch (error) {
@@ -69,7 +67,7 @@ const sendCreateRequestApi = async () => {
   };
 
   try {
-    const response = await axios.post("http://localhost:8080/api/users", request);
+    const response = await api.post("/api/users", request);
 
     console.log(response.data);
 

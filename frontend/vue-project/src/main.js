@@ -7,7 +7,7 @@ import '@/assets/styles/style.css'
 import axios from 'axios';
 
 // axiosのデフォルト設定
-axios.defaults.withCredentials = true; // クッキーを含める設定
+// axios.defaults.withCredentials = true; // クッキーを含める設定
 
 const app = createApp(App)
 

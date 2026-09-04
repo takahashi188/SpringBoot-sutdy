@@ -1,19 +1,21 @@
 <script setup>
 import UserTable from "@/components/user/UserTable.vue";
-import axios from "axios";
+import api from "@/plugins/axios";
 import { ref, watch } from "vue";
-import { useRouter } from "vue-router";
+import { useRouter, useRoute } from "vue-router";
 import { storeToRefs } from "pinia";
 import { useUserListStore } from "@/store/userListStore";
+import { useAuthStore } from "@/store/authStore";
 
 const router = useRouter();
+const route = useRoute();
 const userListStore = useUserListStore();
-
+const authStore = useAuthStore();
 const { currentPage, totalPage, sort, searchKeyword, doSearch } =
   storeToRefs(userListStore);
 
 const users = ref([]);
-const errorMessage = ref("");
+const errorMessage = ref(route.query.error || "");
 // const currentPage = ref(0);
 // const totalPage = ref(0);
 // const sort = ref("id,asc");
@@ -23,10 +25,10 @@ const errorMessage = ref("");
 const getUsers = async () => {
   try {
     const url = doSearch.value
-      ? "http://localhost:8080/api/users/search"
-      : "http://localhost:8080/api/users";
+      ? "/api/users/search"
+      : "/api/users";
 
-    const response = await axios.get(url, {
+    const response = await api.get(url, {
       params: {
         page: currentPage.value,
         size: 10,
@@ -44,11 +46,6 @@ const getUsers = async () => {
   } catch (error) {
     console.log(error);
     users.value = [];
-
-    // ログインしていない場合はログイン画面にリダイレクト
-    if (error.response?.status === 401) {
-      router.push({ name: "login" });
-    }
 
     if (error.response?.data?.message) {
       errorMessage.value = error.response.data.message;
@@ -94,10 +91,22 @@ watch(
 );
 
 const goUserShow = (id) => {
+  errorMessage.value = ""; // エラーメッセージをリセット
+  if (id !== Number(authStore.userId)) {
+    errorMessage.value = "他のユーザー詳細ページは表示できません。";
+    return;
+  }
+
   router.push({ name: "show", params: { id: id } });
 };
 
 const goUserEdit = (id) => {
+  errorMessage.value = ""; // エラーメッセージをリセット
+  if (id !== Number(authStore.userId)) {
+    errorMessage.value = "他のユーザー編集ページは表示できません。";
+    return;
+  }
+
   router.push({ name: "edit", params: { id: id } });
 };
 

@@ -114,7 +114,7 @@ public class UserService {
 				: user.getPassword());
 
 		if (userUpdateRequest.getProfile() != null && hasProfileData(userUpdateRequest.getProfile())) {
-			// ProfileのリクエストDTOをEntityに保持
+			// ProfileのリクエストDTOを保持
 			ProfileCreateRequest profileCreateRequest = userUpdateRequest.getProfile();
 			
 			// もとのProfileデータがあれば使用し、なければ新しくProfileデータを作成
@@ -126,6 +126,7 @@ public class UserService {
 			profile.setUser(user);
 			user.setProfile(profile);
 			
+		// プロフィールのリクエストがなければEntityをnullに設定
 		} else {
 			user.setProfile(null);
 		}
@@ -158,11 +159,13 @@ public class UserService {
 						return qualification;
 					}).collect(Collectors.toList());
 			
+			// 全て一致している場合は破棄しない
 			// 対象のユーザーが持っている既存の資格情報を破棄
 			user.getQualifications().clear();
 			// 新しい資格情報を対象のユーザーの資格情報に結びつける
 			user.getQualifications().addAll(qualifications);
 
+		// 資格のリクエストがなければエンティティの配列を空にする
 		} else {
 			user.getQualifications().clear();
 		}
@@ -296,6 +299,12 @@ public class UserService {
 		return (request.getNickname() != null
 				&& !request.getNickname().isBlank())
 				|| request.getBirthday() != null;
+	}
+	
+	public Integer findIdByEmail(String email) {
+		User user = userRepository.findByEmail(email).orElseThrow();
+		
+		return user.getId();
 	}
 
 }
