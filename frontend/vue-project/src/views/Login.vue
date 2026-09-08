@@ -8,7 +8,7 @@ const authStore = useAuthStore();
 const router = useRouter();
 const errorMessage = ref("");
 const route = useRoute();
-const message = route.query.message || "";
+const message = ref(route.query.message);
 
 const form = reactive({
   email: "",
@@ -17,17 +17,21 @@ const form = reactive({
 
 const login = async () => {
   try {
+    message.value = "";
+    errorMessage.value = "";
     // HTML形式で送信するためにURLSearchParamsを使用してフォームデータを作成
-    const params = new URLSearchParams();
+    // const params = new URLSearchParams();
 
-    params.append("email", form.email);
-    params.append("password", form.password);
+    // params.append("email", form.email);
+    // params.append("password", form.password);
 
     // ログインリクエストを送信
-    const response = await api.post("/login", params);
+    const response = await api.post("/auth/login", form);
+
+    localStorage.setItem("token", response.data.token); // トークンをローカルストレージに保存
 
     // ログイン成功後、ユーザー情報を取得
-    const meResponse = await api.get("/api/auth/me");
+    const meResponse = await api.get("/auth/me");
 
     // ユーザー名をストアに保存してログイン状態を更新
     authStore.login(meResponse.data.name, meResponse.data.id);
