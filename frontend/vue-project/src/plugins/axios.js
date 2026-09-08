@@ -20,11 +20,22 @@ api.interceptors.response.use(
 
       router.push({
         name: "login",
-        query: { message: "セッションが切れました。再度ログインしてください。" },
+        query: { message: "認証期限が切れました。再度ログインしてください。" },
       });
     }
 
     return Promise.reject(error);
+  }
+);
+
+api.interceptors.request.use(
+  (config) => {
+    const token = localStorage.getItem("token");
+    if (token) {
+      // トークンが存在する場合、AuthorizationヘッダーにBearerトークンを設定
+      config.headers.Authorization = `Bearer ${token}`;
+    }
+    return config;
   }
 );
 

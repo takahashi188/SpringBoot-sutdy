@@ -23,21 +23,24 @@ const router = useRouter();
 const authStore = useAuthStore();
 
 const logout = async () => {
-  try {
-    console.log("logout start");
+  // try {
+  //   console.log("logout start");
 
-    await api.post("/logout");
+  //   await api.post("/logout");
 
-    console.log("logout success");
+  //   console.log("logout success");
 
-    // ログアウト後、ストアの状態をリセット
-    authStore.logout();
+  //   // ログアウト後、ストアの状態をリセット
+  //   authStore.logout();
 
-    // ログイン画面にリダイレクト
-    router.push({ name: "login" });
-  } catch (error) {
-    console.error(error);
-  }
+  //   // ログイン画面にリダイレクト
+  //   router.push({ name: "login" });
+  // } catch (error) {
+  //   console.error(error);
+  // }
+
+  authStore.logout();
+  router.push({ name: "login" })
 };
 </script>
 
