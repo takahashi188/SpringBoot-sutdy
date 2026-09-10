@@ -42,6 +42,15 @@ const logout = async () => {
   authStore.logout();
   router.push({ name: "login" })
 };
+
+const batch = async () => {
+  try {
+    const response = await api.post("/api/batch/import-users");
+    console.log("Batch response:", response.data);
+  } catch (error) {
+    console.error("Batch error:", error);
+  }
+};
 </script>
 
 <template>
@@ -83,6 +92,8 @@ const logout = async () => {
       <p v-if="authStore.isLoggedIn" class="px-4 py-2">
         {{ authStore.userName }} さん
       </p>
+
+      <button @click="batch">バッチ</button>
     </div>
   </nav>
 </template>
