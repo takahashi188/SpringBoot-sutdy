@@ -18,7 +18,7 @@ public class JwtService {
 	private String secretKey;
 
 	// JWTの有効期限（1時間）
-	private final long expirationTime = 1000 * 60 * 2;
+	private final long expirationTime = 1000 * 60 * 60;
 
 	/**
 	 * JWTの署名・検証に使用するSecretKeyを生成
