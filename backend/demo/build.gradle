@@ -28,7 +28,6 @@ dependencies {
 	testAnnotationProcessor 'org.projectlombok:lombok'
 	implementation 'org.springframework.boot:spring-boot-starter-thymeleaf'
 	implementation 'org.springframework.boot:spring-boot-starter-validation'
-	implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
 	implementation 'org.postgresql:postgresql'
 	implementation 'org.springframework.boot:spring-boot-starter-web'
 	implementation 'org.springframework.boot:spring-boot-starter-security'
@@ -38,8 +37,25 @@ dependencies {
 	implementation 'org.springframework.boot:spring-boot-starter-batch'
 	testImplementation 'org.springframework.batch:spring-batch-test'
 	runtimeOnly 'com.h2database:h2'
+	implementation 'org.seasar.doma.boot:doma-spring-boot-starter:3.0.0'
+	annotationProcessor 'org.seasar.doma:doma-processor:3.11.1'
 }
 
 tasks.named('test') {
 	useJUnitPlatform()
+}
+
+task copySql(type: Copy) {
+  from './src/main/resources/META-INF'
+  into './build/classes/java/main/META-INF'
+}
+
+compileJava.dependsOn(tasks.named('copySql'))
+
+tasks.withType(Jar) {
+	duplicatesStrategy = DuplicatesStrategy.EXCLUDE
+}
+
+bootJar {
+    duplicatesStrategy = DuplicatesStrategy.EXCLUDE
 }

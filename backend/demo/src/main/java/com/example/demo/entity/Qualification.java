@@ -2,40 +2,60 @@ package com.example.demo.entity;
 
 import java.time.LocalDate;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.ManyToOne;
-import jakarta.persistence.Table;
+import org.seasar.doma.Column;
+import org.seasar.doma.Entity;
+import org.seasar.doma.GeneratedValue;
+import org.seasar.doma.GenerationType;
+import org.seasar.doma.Id;
+import org.seasar.doma.Table;
 
-import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+//@Entity
+//@Table(name = "user_qualifications")
+//@Getter
+//@NoArgsConstructor
+//@AllArgsConstructor
+//public class Qualification {
+//    
+//    @Id
+//    @GeneratedValue(strategy = GenerationType.IDENTITY)
+//    private Integer id;
+//    
+//    @Setter
+//    @ManyToOne
+//    @JoinColumn(name = "user_id", referencedColumnName = "id", nullable = false)
+//    private User user;
+//    
+//    @Setter
+//    @ManyToOne
+//    @JoinColumn(name = "qualification_id", referencedColumnName = "id", nullable = false)
+//    private QualificationMaster qualificationMaster;
+//    
+//    @Setter
+//    private LocalDate acquisitionDate;
+//}
+
+@Getter
+@Setter
+//@AllArgsConstructor
+@NoArgsConstructor
 @Entity
 @Table(name = "user_qualifications")
-@Getter
-@NoArgsConstructor
-@AllArgsConstructor
 public class Qualification {
     
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
     
-    @Setter
-    @ManyToOne
-    @JoinColumn(name = "user_id", referencedColumnName = "id", nullable = false)
-    private User user;
+    @Column(name = "user_id")
+    private Integer userId;
     
-    @Setter
-    @ManyToOne
-    @JoinColumn(name = "qualification_id", referencedColumnName = "id", nullable = false)
-    private QualificationMaster qualificationMaster;
+    @Column(name = "qualification_id")
+    private Integer qualificationId;
     
-    @Setter
+    @Column(name = "acquisition_date")
     private LocalDate acquisitionDate;
 }

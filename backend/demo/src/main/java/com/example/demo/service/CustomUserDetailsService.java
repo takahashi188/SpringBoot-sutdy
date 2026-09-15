@@ -5,8 +5,8 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
+import com.example.demo.dao.UserDao;
 import com.example.demo.entity.User;
-import com.example.demo.repository.UserRepository;
 
 import lombok.RequiredArgsConstructor;
 
@@ -22,7 +22,8 @@ import lombok.RequiredArgsConstructor;
 public class CustomUserDetailsService implements UserDetailsService {
 
     // ユーザー情報取得用Repository
-    private final UserRepository userRepository;
+//    private final UserRepository userRepository;
+	private final UserDao userDao;
 
     /**
      * Spring Securityが認証時に自動呼び出しするメソッド
@@ -36,7 +37,7 @@ public class CustomUserDetailsService implements UserDetailsService {
 
         // メールアドレスでユーザー検索
         // ユーザーが存在しない場合は認証失敗とする
-        User user = userRepository.findByEmail(email)
+        User user = userDao.findByEmail(email)
                 .orElseThrow(() ->
                         new UsernameNotFoundException("ユーザーが存在しません"));
 

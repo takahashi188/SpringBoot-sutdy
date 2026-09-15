@@ -10,11 +10,11 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.example.demo.dao.UserDao;
 import com.example.demo.dto.LoginRequest;
 import com.example.demo.dto.LoginResponse;
 import com.example.demo.dto.UserInfoResponse;
 import com.example.demo.entity.User;
-import com.example.demo.repository.UserRepository;
 import com.example.demo.service.JwtService;
 
 import lombok.RequiredArgsConstructor;
@@ -25,7 +25,9 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class AuthController {
 
-	private final UserRepository userRepository;
+
+//	private final UserRepository userRepository;
+	private final UserDao userDao;
 	private final JwtService jwtService;
 	private final AuthenticationManager authenticationManager;
 
@@ -48,7 +50,7 @@ public class AuthController {
 	        Authentication authentication) {
 
 	    User user =
-	            userRepository.findByEmail(
+	            userDao.findByEmail(
 	                    authentication.getName()).orElseThrow();
 
 	    return new UserInfoResponse(
@@ -61,6 +63,7 @@ public class AuthController {
 	public ResponseEntity<LoginResponse> login(@RequestBody LoginRequest loginRequest) {
 		// 入力されたメールアドレスとパスワードで認証を実行
 		// 認証に失敗した場合は AuthenticationException が発生する
+		try {
 		authenticationManager.authenticate(
 		        new UsernamePasswordAuthenticationToken(
 		                loginRequest.getEmail(),
@@ -71,5 +74,9 @@ public class AuthController {
 		        jwtService.generateToken(loginRequest.getEmail());
 		
 		return ResponseEntity.ok(new LoginResponse(token));
+		} catch (Exception e) {
+			e.printStackTrace();
+			throw e;
+		}
 	}
 }
