@@ -57,7 +57,10 @@ const validateForm = () => {
 };
 
 const sendCreateRequestApi = async () => {
-  if (!validateForm()) return;
+  if (!validateForm()) {
+    step.value = 1;
+    return;
+  };
 
   const request = {
     ...form,

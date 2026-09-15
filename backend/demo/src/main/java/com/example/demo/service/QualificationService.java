@@ -4,9 +4,9 @@ import java.util.List;
 
 import org.springframework.stereotype.Service;
 
+import com.example.demo.dao.QualificationMasterDao;
 import com.example.demo.dto.QualificationResponse;
 import com.example.demo.entity.QualificationMaster;
-import com.example.demo.repository.QualificationMasterRepository;
 
 import lombok.RequiredArgsConstructor;
 
@@ -14,10 +14,10 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class QualificationService {
 	
-	private final QualificationMasterRepository qualificationMasterRepository;
+	private final QualificationMasterDao qualificationMasterDao;
 	
 	public List<QualificationResponse> getQualificationMaster() {
-		List<QualificationMaster> qualificationMasters = qualificationMasterRepository.findAll();
+		List<QualificationMaster> qualificationMasters = qualificationMasterDao.findAll();
 		
 		List<QualificationResponse> qualificationResponses = qualificationMasters.stream().map(
 				qualificationMaster -> {
